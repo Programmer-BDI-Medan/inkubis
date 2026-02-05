@@ -20,7 +20,7 @@ const submit = () => {
 };
 
 const loginWithGoogle = () => {
-    window.location.href = "/auth/google";
+    window.location.href = "/auth-google-redirect";
 };
 </script>
 
