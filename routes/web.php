@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Http\Request;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,8 +21,17 @@ Route::get('/', function () {
 Route::get('/auth-google-redirect', [AuthenticatedSessionController::class, 'google_redirect']);
 Route::get('/auth-google-callback', [AuthenticatedSessionController::class, 'google_callback']);
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/dashboard', function (Request $request) {
+    $role = $request->user()->role;
+
+    // Arahkan berdasarkan role
+    return match ($role) {
+        'super_admin' => redirect()->route('admin.dashboard'),
+        'admin'        => redirect()->route('admin.dashboard'),
+        'staff'        => redirect()->route('staff.dashboard'),
+        'tenant'      => redirect()->route('tenant.dashboard'),
+        default       => inertia('Dashboard'), // User biasa ke dashboard standar
+    };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -33,7 +44,7 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::get('/admin-dashboard', function () {
     return Inertia::render('Admin/Dashboard');
-})->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+})->middleware(['auth', 'role:super_admin,admin'])->name('admin.dashboard');
 
 
 // Staff Routes
@@ -42,7 +53,9 @@ Route::get('/staff-dashboard', function () {
 })->middleware(['auth', 'role:staff'])->name('staff.dashboard');
 
 
-
 // Tenant Routes
+Route::get('/tenant-dashboard', function () {
+    return Inertia::render('Tenant/Dashboard');
+})->middleware(['auth', 'role:tenant'])->name('tenant.dashboard');
 
 require __DIR__ . '/auth.php';

@@ -69,8 +69,8 @@ class AuthenticatedSessionController extends Controller
     private function getRedirectRoute($user)
         {
             $roleRoutes = [
-                'super_admin' => 'super_admin.dashboard',
-                'admin'       => 'admin.dashboard',
+                'super_admin'=> 'admin.dashboard',
+                'admin' => 'admin.dashboard',
                 'staff'       => 'staff.dashboard',
                 'tenant'      => 'tenant.dashboard',
             ];
