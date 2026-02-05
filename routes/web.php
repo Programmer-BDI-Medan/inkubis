@@ -23,9 +23,6 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/formdaftar', function () {
-    return Inertia::render('formDaftar');
-})->middleware(['auth', 'verified'])->name('formdaftar');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,4 +45,4 @@ Route::get('/staff-dashboard', function () {
 
 // Tenant Routes
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
