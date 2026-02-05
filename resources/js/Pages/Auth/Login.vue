@@ -28,7 +28,7 @@ const submit = () => {
 };
 
 const loginWithGoogle = () => {
-    window.location.href = "/auth/google";
+    window.location.href = "/auth-google-redirect";
 };
 </script>
 
@@ -216,8 +216,8 @@ const loginWithGoogle = () => {
                     <p
                         class="text-teal-50 text-sm leading-relaxed font-light opacity-90"
                     >
-                        "Wadah pembinaan wirausaha pemula untuk mengembangkan
-                        bisnis yang tangguh dan mandiri."
+                        Wadah pembinaan wirausaha pemula untuk mengembangkan
+                        bisnis yang tangguh dan mandiri.
                     </p>
 
                     <div

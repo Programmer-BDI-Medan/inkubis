@@ -44,6 +44,12 @@ class AuthenticatedSessionController extends Controller
     }
     public function google_callback()
     {
+        // try catch kalo error
+        if (request()->has('error') || !request()->has('code')) {
+        return redirect()->route('login')
+            ->with('error', 'Login dibatalkan atau terjadi kesalahan.');
+    }
+
         $googleUser = Socialite::driver('google')->user();
         $user = User::whereEmail($googleUser->getEmail())->first();
         if (!$user) {
@@ -63,8 +69,8 @@ class AuthenticatedSessionController extends Controller
     private function getRedirectRoute($user)
         {
             $roleRoutes = [
-                'super_admin' => 'super_admin.dashboard',
-                'admin'       => 'admin.dashboard',
+                'super_admin'=> 'admin.dashboard',
+                'admin' => 'admin.dashboard',
                 'staff'       => 'staff.dashboard',
                 'tenant'      => 'tenant.dashboard',
             ];

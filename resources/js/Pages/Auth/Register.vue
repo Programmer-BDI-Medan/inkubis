@@ -20,7 +20,7 @@ const submit = () => {
 };
 
 const loginWithGoogle = () => {
-    window.location.href = "/auth/google";
+    window.location.href = "/auth-google-redirect";
 };
 </script>
 
@@ -222,8 +222,8 @@ const loginWithGoogle = () => {
                     <p
                         class="text-teal-50 text-xs leading-relaxed font-light opacity-90"
                     >
-                        "Bergabunglah dengan komunitas wirausaha terbaik dan
-                        kembangkan potensimu bersama BDI Medan."
+                        Bergabunglah dengan komunitas wirausaha terbaik dan
+                        kembangkan potensimu bersama BDI Medan.
                     </p>
 
                     <div
