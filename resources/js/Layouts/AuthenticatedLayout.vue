@@ -35,9 +35,15 @@ const showingNavigationDropdown = ref(false);
                             >
                                 <NavLink
                                     :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
+                                    :active="route().current('dashboard') || route().current('*.dashboard')"
                                 >
                                     Dashboard
+                                </NavLink>
+                                <NavLink
+                                    :href="route('admin.kelola-user')"
+                                    :active="route().current('admin.kelola-user')"
+                                >
+                                    Manajemen User
                                 </NavLink>
                             </div>
                         </div>

@@ -46,6 +46,10 @@ Route::get('/admin-dashboard', function () {
     return Inertia::render('Admin/Dashboard');
 })->middleware(['auth', 'role:super_admin,admin'])->name('admin.dashboard');
 
+Route::get('/kelola-user', function () {
+    return Inertia::render('Admin/KelolaUser');
+})->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
+
 
 // Staff Routes
 Route::get('/staff-dashboard', function () {
