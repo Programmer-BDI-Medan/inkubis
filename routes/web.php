@@ -1,11 +1,12 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ManajemenUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use Illuminate\Http\Request;
 
 
 Route::get('/', function () {
@@ -46,9 +47,8 @@ Route::get('/admin-dashboard', function () {
     return Inertia::render('Admin/Dashboard');
 })->middleware(['auth', 'role:super_admin,admin'])->name('admin.dashboard');
 
-Route::get('/kelola-user', function () {
-    return Inertia::render('Admin/KelolaUser');
-})->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
+Route::get('/kelola-user', [ManajemenUserController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
+Route::patch('/kelola-user/{user}/update-role', [ManajemenUserController::class, 'updateRole'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.updateRole');
 
 
 // Staff Routes
