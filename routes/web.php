@@ -56,6 +56,17 @@ Route::get('/staff-dashboard', function () {
     return Inertia::render('Staff/Dashboard');
 })->middleware(['auth', 'role:staff'])->name('staff.dashboard');
 
+Route::get('/staff/program/{id}', function ($id) {
+    return Inertia::render('Staff/Program', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.program');
+
+Route::get('/staff/detail-tenant/{id}', function ($id) {
+    return Inertia::render('Staff/DetailTenant', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.detail-tenant');
+
+Route::get('/staff/detail-phase/{id}', function ($id) {
+    return Inertia::render('Staff/DetailPhase', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.detail-phase');
 
 // Tenant Routes
 Route::get('/tenant-dashboard', function () {
