@@ -10,7 +10,7 @@ const props = defineProps({
 });
 
 // --- LOGIKA COUNTDOWN ---
-const targetDate = new Date('2026-02-10T23:59:59').getTime(); // Atur tanggal target di sini
+const targetDate = new Date('2026-04-18T23:59:59').getTime(); // Atur tanggal target di sini
 const days = ref(0);
 const hours = ref(0);
 const minutes = ref(0);

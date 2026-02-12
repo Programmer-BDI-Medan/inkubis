@@ -17,6 +17,7 @@ return new class extends Migration
             $table->dateTime('tanggal_penyelenggaraan');
             $table->string('nama_program');
             $table->text('deskripsi');
+            $table->boolean('pra_kewirausahaan')->default(false);
             $table->timestamps();
         });
     }
