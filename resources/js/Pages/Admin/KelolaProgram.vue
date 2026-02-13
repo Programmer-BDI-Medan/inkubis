@@ -1,0 +1,265 @@
+<script setup>
+import { ref } from 'vue';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head, useForm } from "@inertiajs/vue3";
+
+const props = defineProps({
+    programs: Array
+})
+
+const stats = [
+    {
+        title: "Total program",
+        value: props.programs.length.toString(),
+        unit: "Program",
+        icon: "M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z",
+        color: "text-blue-600",
+        bg: "bg-blue-50",
+    },
+    {
+        title: "Total Tenant",
+        value: props.programs.reduce((total, program) => total + (program.tenants?.length ?? 0), 0).toString(),
+        unit: "UMKM",
+        icon: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z",
+        color: "text-orange-600",
+        bg: "bg-orange-50",
+    },
+    {
+        title: "Tenant Aktif",
+        value: props.programs
+              .filter(program => [1, 2, 4].includes(program.tahapan_inkubasi_id))
+              .reduce((total, program) => total + (program.tenants?.length ?? 0), 0)
+              .toString(),
+        unit: "Inkubasi",
+        icon: "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z",
+        color: "text-emerald-600",
+        bg: "bg-emerald-50",
+    },
+    {
+        title: "Total Alumni",
+        value: props.programs
+              .filter(program => [3].includes(program.tahapan_inkubasi_id))
+              .reduce((total, program) => total + (program.tenants?.length ?? 0), 0)
+              .toString(),
+        unit: "Pasca Inkubasi",
+        icon: "M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.499 5.258 50.55 50.55 0 0 0-2.658.813m-15.482 0A50.55 50.55 0 0 1 12 13.489a50.55 50.55 0 0 1 10.499-3.342",
+        color: "text-purple-600",
+        bg: "bg-purple-50",
+    },
+];
+
+const tahapStyle = (tahap) => {
+  const base = 'px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ';
+  switch (tahap) {
+    case 'Masa Inkubasi': return base + 'bg-blue-50 text-blue-600 border border-blue-100';
+    case 'Pasca Inkubasi': return base + 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+    default: return base + 'bg-slate-50 text-slate-500 border border-slate-100';
+  }
+};
+
+
+const isModalOpen = ref(false);
+const openAddModal = () => {
+  isModalOpen.value = true;
+};
+
+const newProgram = useForm({
+    nama: '',
+    deskripsi: '',
+    tanggal: '',
+    isPraKewirausahaan: false
+});
+
+const addProgram = () => {
+    // Validasi sederhana sebelum kirim
+    if (!newProgram.nama || !newProgram.deskripsi || !newProgram.tanggal) {
+        alert('Harap isi semua field yang diperlukan.');
+        return;
+    }
+
+    // Kirim data ke Laravel menggunakan POST
+    newProgram.post(route('admin.add-program'), {
+        onSuccess: () => {
+            isModalOpen.value = false;
+            newProgram.reset();
+        },
+        onError: (errors) => {
+            console.log('Error:', errors);
+        },
+        onFinish: () => {
+            console.log('Add program selesai');  
+          // Logika setelah selesai (opsional)
+        },
+    });
+};
+
+</script>
+
+<template>
+  <Head title="Dashboard Admin" />
+  <AuthenticatedLayout>
+    <div class="p-8 bg-slate-50 min-h-screen">
+      <div class="max-w-7xl mx-auto">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-800">Manajemen Program</h1>
+            <p class="text-slate-500 text-sm">Kelola program inkubasi dan akselerasi bisnis Anda.</p>
+          </div>
+          <button 
+            @click="openAddModal"
+            class="flex items-center justify-center bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-100 transition-all transform active:scale-95"
+          >
+            <span class="text-xl mr-2 leading-none">+</span>
+            Tambah Program Baru
+          </button>
+        </div>
+
+        <!-- Modal Add Program -->
+         <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="isModalOpen = false"></div>
+                
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden">
+                    <div class="px-6 py-4 border-b flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-slate-800">Tambah Program Baru</h2>
+                    </div>
+
+                    <div class="px-6 py-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Program</label>
+                            <input v-model="newProgram.nama" type="text" placeholder="Masukkan nama program"
+                                class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Deskripsi</label>
+                            <textarea v-model="newProgram.deskripsi" rows="3" placeholder="Jelaskan detail program..."
+                                class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tanggal Pelaksanaan</label>
+                            <input v-model="newProgram.tanggal" type="date"
+                                class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                            <input v-model="newProgram.isPraKewirausahaan" type="checkbox" id="praKewirausahaan"
+                                class="w-5 h-5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                            <label for="praKewirausahaan" class="text-sm font-medium text-slate-700 cursor-pointer">
+                                Apakah ada Pra-kewirausahaan?
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 flex gap-3">
+                        <button @click="isModalOpen = false" class="flex-1 py-2.5 font-bold text-slate-600 hover:text-slate-800 transition-colors">
+                            Batal
+                        </button>
+                        <button @click="addProgram" 
+                            class="flex-1 py-2.5 bg-gradient-to-br from-indigo-600 to-violet-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-200">
+                            {{ newProgram.processing ? 'Menyimpan...' : 'Simpan Program Baru' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+          <div
+            v-for="(stat, index) in stats"
+            :key="index"
+            class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all group"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {{ stat.title }}
+                </p>
+                <h3 class="text-3xl font-bold text-slate-800 mt-1 group-hover:text-teal-600 transition-colors">
+                  {{ stat.value }}
+                </h3>
+                <p class="text-[11px] font-medium text-slate-400 mt-1">
+                  {{ stat.unit }}
+                </p>
+              </div>
+              <div :class="['p-3 rounded-xl transition-colors', stat.bg]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  :class="['w-6 h-6', stat.color]"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="stat.icon" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
+            <h2 class="font-bold text-slate-700">Daftar Program Inkubasi</h2>
+            <div class="relative">
+                <input 
+                    type="text" 
+                    placeholder="Cari program..." 
+                    class="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 w-64 transition-all"
+                />
+                
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50 text-slate-500 text-[11px] uppercase tracking-[0.15em] font-bold">
+                  <th class="px-8 py-4">Nama Program</th>
+                  <th class="px-8 py-4 text-center">Total Tenant</th>
+                  <th class="px-8 py-4 text-center">Tahapan</th>
+                  <th class="px-8 py-4 text-center">Tahun</th>
+                  <th class="px-8 py-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr v-for="program in programs" :key="program.id" class="hover:bg-slate-50/80 transition-colors group">
+                  <td class="px-8 py-5">
+                    <div class="font-bold text-slate-700 text-sm tracking-tight">{{ program.nama_program }}</div>
+                  </td>
+                  <td class="px-8 py-5 text-center">
+                    <span class="text-sm font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">{{ program.tenants.length }}</span>
+                  </td>
+                  <td class="px-8 py-5 text-center">
+                    <!-- <span :class="tahapStyle(program.stage.nama_tahap)">
+                      {{ program.stage.nama_tahap }}
+                    </span> -->
+                    <span>
+                      {{ program.stage?.tahapan_inkubasi }}
+                    </span>
+                  </td>
+                  <td class="px-8 py-5 text-center">
+                    <span class="text-indigo-600 text-xs font-bold tracking-wider">{{ program.tanggal_penyelenggaraan.split('-')[0] }}</span>
+                  </td>
+                  <td class="px-8 py-5 text-right">
+                    <button class="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthenticatedLayout>
+</template>
+

@@ -45,6 +45,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Manajemen User
                                 </NavLink>
+                                <NavLink
+                                    :href="route('admin.kelola-program')"
+                                    :active="route().current('admin.kelola-program')"
+                                >
+                                    Manajemen Program
+                                </NavLink>
                             </div>
                         </div>
 

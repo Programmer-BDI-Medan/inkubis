@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3"; // Tambahkan useForm
+import { Head, useForm } from "@inertiajs/vue3"; 
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -60,7 +60,6 @@ const updateUserRole = () => {
     }
 
     // Kirim data ke Laravel menggunakan PATCH
-    // Ganti 'users.updateRole' dengan nama route di web.php kamu
     form.patch(route('admin.updateRole', form.id), {
         onSuccess: () => {
             isModalOpen.value = false;
