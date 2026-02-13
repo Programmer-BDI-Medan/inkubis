@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ManajemenUserController;
+use App\Http\Controllers\Admin\ManajemenProgramController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 
@@ -49,6 +50,9 @@ Route::get('/admin-dashboard', function () {
 
 Route::get('/kelola-user', [ManajemenUserController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
 Route::patch('/kelola-user/{user}/update-role', [ManajemenUserController::class, 'updateRole'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.updateRole');
+
+Route::get('/kelola-program', [ManajemenProgramController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-program');
+Route::post('/add-program', [ManajemenProgramController::class, 'add'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.add-program');
 
 
 // Staff Routes

@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\FormPendaftaran;
+use App\Models\InkubisDocument;
+use App\Models\InkubisStage;
+use App\Models\InkubisTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
