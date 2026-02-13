@@ -2,25 +2,31 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\InkubisProgram;
+use App\Models\InkubisTenant;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ManajemenUserController extends Controller
 {
     public function index()
     {
-        $users = User::query()
+        $users = User::with(['tenant'])
             ->select('id', 'name', 'email', 'role')
             ->get();
 
+        $programs = InkubisProgram::select('id', 'nama_program')->get();
+
         return inertia('Admin/KelolaUser', [
             'users' => $users,
+            'programs' => $programs
         ]);
     }
 
     public function updateRole(Request $request, User $user)
     {
+        // dd($user);
         $request->validate([
             'role' => 'required|in:super_admin,admin,staff,tenant,user',
         ]);
@@ -28,6 +34,29 @@ class ManajemenUserController extends Controller
         $user->role = $request->role;
         $user->save();
 
+        if ($request->role ==='tenant' && $request->inkubator_id) {
+            $tenant = InkubisTenant::where('user_id', $user->id)->first();
+            $tenant->inkubis_program_id = $request->inkubator_id;
+            $tenant->save();
+            if (!$tenant) {
+                $tenant = new InkubisTenant();
+                $tenant->user_id = $user->id;
+                $tenant->inkubis_program_id = $request->inkubator_id;
+                $tenant->nama_tenant = '-';
+                $tenant->jenis_produk = '-';
+                $tenant->deskripsi = '-';
+                $tenant->save();
+            }
+        }
+
         return redirect()->route('admin.kelola-user')->with('success', 'Role pengguna berhasil diperbarui.');
+    }
+
+    public function destroy(User $user)
+    {
+        // Hapus user
+        $user->delete();
+
+        return redirect()->route('admin.kelola-user')->with('success', 'Pengguna berhasil dihapus.');
     }
 }

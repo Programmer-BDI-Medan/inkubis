@@ -11,7 +11,6 @@ class ManajemenProgramController extends Controller
     public function index()
     {
         $programs = InkubisProgram::with(['stage', 'tenants'])->get();
-;
 
         return inertia('Admin/KelolaProgram', [
             'programs' => $programs
@@ -39,5 +38,27 @@ class ManajemenProgramController extends Controller
         $program->save();
 
         return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil ditambahkan!');
+    }
+
+    public function update(Request $request, $id)
+    { 
+        $program = InkubisProgram::findOrFail($id);
+
+        $program->tahapan_inkubasi_id = $request->idTahapan;
+        $program->nama_program = $request->nama;
+        $program->deskripsi = $request->deskripsi;
+        $program->tanggal_penyelenggaraan = $request->tanggal;
+        $program->pra_kewirausahaan = $request->isPraKewirausahaan;
+        $program->save();
+
+        return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $program = InkubisProgram::findOrFail($id);
+        $program->delete();
+
+        return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil dihapus!');
     }
 }
