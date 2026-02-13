@@ -4,19 +4,16 @@ import { Head, useForm } from "@inertiajs/vue3";
 import { ref, computed } from 'vue';
 
 const props = defineProps({
-    users: Array
+    users: Array,
+    programs: Array
 })
 
 // --- STATE UI ---
 const roles = ['admin', 'staff', 'tenant', 'user'];
 const activeTab = ref('user');
 const isModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
 const searchQuery = ref('');
-const inkubatorPrograms = ref([
-    { id: 1, name: 'Startup Digital Batch 1' },
-    { id: 2, name: 'Inkubasi Bisnis UMKM' },
-    { id: 3, name: 'Creative Techno Hub 2024' },
-]);
 
 // --- STATE FORM (Inertia useForm) ---
 const form = useForm({
@@ -41,13 +38,15 @@ const filteredUsers = computed(() => {
     return data;
 });
 
+
+
 const openEditModal = (user) => {
     // Isi data form dengan user yang dipilih
     form.id = user.id;
     form.name = user.name;
     form.email = user.email;
     form.role = user.role;
-    form.inkubator_id = user.inkubator_id || '';
+    form.inkubator_id = user.tenant?.inkubis_program_id || '';
     
     isModalOpen.value = true;
 };
@@ -73,10 +72,32 @@ const updateUserRole = () => {
     });
 };
 
-// Helper tampilan (Badge & Program Name)
+const selectedUser = ref(null);
+const openDeleteModal = (user) => {
+    selectedUser.value = user;
+    isDeleteModalOpen.value = true;
+};
+
+const confirmDelete = () => {
+    if (!selectedUser.value) return;
+
+    // Kirim permintaan delete ke Laravel
+    form.delete(route('admin.deleteUser', selectedUser.value.id), {
+        onSuccess: () => {
+            isDeleteModalOpen.value = false;
+            selectedUser.value = null;
+        },
+        onFinish: () => {
+            console.log('Hapus user selesai');  
+        },
+    });
+};
+
+// Helper tampilan (Program Name)
 const getProgramName = (id) => {
-    const program = inkubatorPrograms.value.find(p => p.id === id);
-    return program ? program.name : 'Belum memilih program';
+    return props.programs
+        .find(p => Number(p.id) === Number(id))
+        ?.nama_program ?? 'Belum memilih program';
 };
 
 const roleBadgeStyle = (role) => {
@@ -148,7 +169,7 @@ const roleDotStyle = (role) => {
                                 </div>
                             </td>
                             <td class="p-4 px-6 text-slate-600">{{ user.email }}</td>
-                            <td v-if="activeTab === 'tenant'" class="p-4 italic">{{ getProgramName(user.inkubator_id) }}</td>
+                            <td v-if="activeTab === 'tenant'" class="p-4 italic">{{ getProgramName(user.tenant.inkubis_program_id) }}</td>
                             <td class="p-4">
                                 <span :class="roleBadgeStyle(user.role)">
                                     <span class="h-1.5 w-1.5 rounded-full mr-2" :class="roleDotStyle(user.role)"></span>
@@ -156,8 +177,80 @@ const roleDotStyle = (role) => {
                                 </span>
                             </td>
                             <td class="p-4 text-right">
-                                <button @click="openEditModal(user)" class="text-indigo-600 font-bold hover:text-violet-700 transition-colors">Ubah Role</button>
+                                <div class="flex justify-end items-center gap-3">
+
+                                    <!-- Button Edit -->
+                                    <button 
+                                        @click="openEditModal(user)" 
+                                        class="text-indigo-600 font-bold hover:text-violet-700 transition-colors"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                            class="h-5 w-5" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" 
+                                                stroke-linejoin="round" 
+                                                stroke-width="2" 
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+
+                                    <!-- Button Delete -->
+                                    <button 
+                                        @click="openDeleteModal(user)" 
+                                        class="text-red-600 font-bold hover:text-red-800 transition-colors"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                            class="h-5 w-5" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" 
+                                                stroke-linejoin="round" 
+                                                stroke-width="2" 
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0H7m3-3h4a1 1 0 011 1v2H9V5a1 1 0 011-1z" />
+                                        </svg>
+                                    </button>
+
+                                    <!-- Delete Confirmation Modal -->
+                                    <div v-if="isDeleteModalOpen" 
+                                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+
+                                        <div class="bg-white rounded-2xl shadow-xl w-96 p-6 animate-fadeIn">
+                                            
+                                            <h2 class="text-lg font-bold text-gray-800 mb-3">
+                                                Konfirmasi Hapus
+                                            </h2>
+
+                                            <p class="text-gray-600 mb-6">
+                                                Apakah Anda yakin ingin menghapus akun 
+                                                <span class="font-semibold text-red-600">
+                                                    {{ selectedUser?.email }}
+                                                </span> ?
+                                            </p>
+
+                                            <div class="flex justify-end gap-3">
+                                                
+                                                <button 
+                                                    @click="isDeleteModalOpen = false"
+                                                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
+                                                    Batal
+                                                </button>
+
+                                                <button 
+                                                    @click="confirmDelete"
+                                                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+                                                    Hapus
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </td>
+
                         </tr>
                     </tbody>
                 </table>
@@ -193,7 +286,7 @@ const roleDotStyle = (role) => {
                             <label class="block text-sm font-bold text-slate-700 mb-2">PROGRAM INKUBATOR</label>
                             <select v-model="form.inkubator_id" class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl">
                                 <option value="" disabled>-- Pilih Program --</option>
-                                <option v-for="program in inkubatorPrograms" :key="program.id" :value="program.id">{{ program.name }}</option>
+                                <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.nama_program }}</option>
                             </select>
                         </div>
                     </div>

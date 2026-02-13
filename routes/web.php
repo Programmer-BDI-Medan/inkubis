@@ -50,10 +50,12 @@ Route::get('/admin-dashboard', function () {
 
 Route::get('/kelola-user', [ManajemenUserController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
 Route::patch('/kelola-user/{user}/update-role', [ManajemenUserController::class, 'updateRole'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.updateRole');
+Route::delete('/kelola-user/{user}/delete', [ManajemenUserController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.deleteUser');
 
 Route::get('/kelola-program', [ManajemenProgramController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-program');
 Route::post('/add-program', [ManajemenProgramController::class, 'add'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.add-program');
-
+Route::patch('/update-program/{id}', [ManajemenProgramController::class, 'update'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.update-program');
+Route::delete('/delete-program/{id}', [ManajemenProgramController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.delete-program');
 
 // Staff Routes
 Route::get('/staff-dashboard', function () {
