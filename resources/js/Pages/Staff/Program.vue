@@ -476,7 +476,7 @@ const submitUpload = () => {
                                         class="w-full pl-3 pr-8 py-2 text-sm rounded-lg border-slate-300 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm cursor-pointer"
                                     >
                                         <option value="">Semua Fase</option>
-                                        <option value="Pra-Kewirausahaan">
+                                        <option v-if="program.pra_kewirausahaan" value="Pra-Kewirausahaan">
                                             Pra-Kewirausahaan
                                         </option>
                                         <option value="Pra-Inkubasi">
@@ -944,7 +944,7 @@ const submitUpload = () => {
                                 <option value="" disabled>
                                     Pilih Fase Program
                                 </option>
-                                <option value="Pra-Kewirausahaan">
+                                <option v-if="program.pra_kewirausahaan" value="Pra-Kewirausahaan">
                                     Pra-Kewirausahaan
                                 </option>
                                 <option value="Pra-Inkubasi">
