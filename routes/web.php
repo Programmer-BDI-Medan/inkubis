@@ -50,16 +50,29 @@ Route::get('/admin-dashboard', function () {
 
 Route::get('/kelola-user', [ManajemenUserController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-user');
 Route::patch('/kelola-user/{user}/update-role', [ManajemenUserController::class, 'updateRole'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.updateRole');
+Route::delete('/kelola-user/{user}/delete', [ManajemenUserController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.deleteUser');
 
 Route::get('/kelola-program', [ManajemenProgramController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-program');
 Route::post('/add-program', [ManajemenProgramController::class, 'add'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.add-program');
-
+Route::patch('/update-program/{id}', [ManajemenProgramController::class, 'update'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.update-program');
+Route::delete('/delete-program/{id}', [ManajemenProgramController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.delete-program');
 
 // Staff Routes
 Route::get('/staff-dashboard', function () {
     return Inertia::render('Staff/Dashboard');
 })->middleware(['auth', 'role:staff'])->name('staff.dashboard');
 
+Route::get('/staff/program/{id}', function ($id) {
+    return Inertia::render('Staff/Program', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.program');
+
+Route::get('/staff/detail-tenant/{id}', function ($id) {
+    return Inertia::render('Staff/DetailTenant', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.detail-tenant');
+
+Route::get('/staff/detail-phase/{id}', function ($id) {
+    return Inertia::render('Staff/DetailPhase', ['id' => $id]);
+})->middleware(['auth', 'role:staff'])->name('staff.detail-phase');
 
 // Tenant Routes
 Route::get('/tenant-dashboard', function () {
