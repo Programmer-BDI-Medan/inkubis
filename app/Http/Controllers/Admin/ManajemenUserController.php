@@ -26,19 +26,22 @@ class ManajemenUserController extends Controller
 
     public function updateRole(Request $request, User $user)
     {
-        // dd($user);
+        
+    
         $request->validate([
             'role' => 'required|in:super_admin,admin,staff,tenant,user',
         ]);
 
-        $user->role = $request->role;
+        $user->role = $request->role; 
         $user->save();
+
 
         if ($request->role ==='tenant' && $request->inkubator_id) {
             $tenant = InkubisTenant::where('user_id', $user->id)->first();
-            $tenant->inkubis_program_id = $request->inkubator_id;
-            $tenant->save();
-            if (!$tenant) {
+            if ($tenant) {
+                $tenant->inkubis_program_id = $request->inkubator_id;
+                $tenant->save();
+            } else {
                 $tenant = new InkubisTenant();
                 $tenant->user_id = $user->id;
                 $tenant->inkubis_program_id = $request->inkubator_id;

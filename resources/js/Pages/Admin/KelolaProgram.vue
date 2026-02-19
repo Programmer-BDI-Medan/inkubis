@@ -51,17 +51,19 @@ const stats = [
 const tahapStyle = (tahap) => {
   const base = 'px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ';
   switch (tahap) {
-    case 'PRA-INKUBASI': return base + 'bg-blue-50 text-blue-600 border border-blue-100';
-    case 'PASCA-INKUBASI': return base + 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+    case 'Pra-Kewirausahaan': return base + 'bg-blue-50 text-blue-600 border border-blue-100';
+    case 'Pra-Inkubasi': return base + 'bg-indigo-50 text-indigo-600 border border-indigo-100';
+    case 'Masa-Inkubasi': return base + 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+    case 'Pasca-Inkubasi': return base + 'bg-purple-50 text-purple-600 border border-purple-100';
     default: return base + 'bg-slate-50 text-slate-500 border border-slate-100';
   }
 };
 
 const tahapan = [
-  { id: 4, nama: 'PRA-KEWIRAUSAHAAN' },
-  { id: 1, nama: 'PRA-INKUBASI' },
-  { id: 2, nama: 'INKUBASI' },
-  { id: 3, nama: 'PASCA-INKUBASI' },
+  { id: 1, nama: 'Pra-Kewirausahaan' },
+  { id: 2, nama: 'Pra-Inkubasi' },
+  { id: 3, nama: 'Masa-Inkubasi' },
+  { id: 4, nama: 'Pasca-Inkubasi' },
 ];
 
 const isModalOpen = ref(false);
