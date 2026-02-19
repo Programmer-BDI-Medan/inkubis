@@ -1,13 +1,15 @@
 <?php
 
-use Inertia\Inertia;
+use App\Http\Controllers\Admin\ManajemenProgramController;
+use App\Http\Controllers\Admin\ManajemenUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Staff\DashboardStaffController;
+use App\Http\Controllers\Staff\StaffProgramController;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\ManajemenUserController;
-use App\Http\Controllers\Admin\ManajemenProgramController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Inertia\Inertia;
 
 
 Route::get('/', function () {
@@ -58,13 +60,9 @@ Route::patch('/update-program/{id}', [ManajemenProgramController::class, 'update
 Route::delete('/delete-program/{id}', [ManajemenProgramController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.delete-program');
 
 // Staff Routes
-Route::get('/staff-dashboard', function () {
-    return Inertia::render('Staff/Dashboard');
-})->middleware(['auth', 'role:staff'])->name('staff.dashboard');
+Route::get('/staff-dashboard', [DashboardStaffController::class, 'index'])->middleware(['auth', 'role:staff'])->name('staff.dashboard');
 
-Route::get('/staff/program/{id}', function ($id) {
-    return Inertia::render('Staff/Program', ['id' => $id]);
-})->middleware(['auth', 'role:staff'])->name('staff.program');
+Route::get('/staff/program/{id}', [StaffProgramController::class, 'index'])->middleware(['auth', 'role:staff'])->name('staff.program');
 
 Route::get('/staff/detail-tenant/{id}', function ($id) {
     return Inertia::render('Staff/DetailTenant', ['id' => $id]);

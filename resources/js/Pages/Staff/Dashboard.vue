@@ -3,36 +3,13 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 
-// 1. DATA USER
-const currentUser = ref({ name: "Staff 001" });
+// 1. DATA form Backend
+const props = defineProps({
+    user: Object,
+    programs: Array
+})
 
-// 2. DATA PROGRAM
-const programs = ref([
-    {
-        id: 1,
-        name: "Inkubator Bisnis Kolaborasi BP3MI",
-        year: "2026",
-        status: "Pra-Kewirausahaan",
-    },
-    {
-        id: 2,
-        name: "Inkubator Bisnis Kolaborasi Unilever",
-        year: "2025",
-        status: "Pra-Inkubasi",
-    },
-    {
-        id: 3,
-        name: "Program Kemitraan Inalum",
-        year: "2024",
-        status: "Inkubasi",
-    },
-    {
-        id: 4,
-        name: "Pendampingan UMKM Lokal",
-        year: "2026",
-        status: "Pasca Inkubasi",
-    },
-]);
+const programs = ref(props.programs);
 
 // 3. LOGIC FILTER
 const searchQuery = ref("");
@@ -42,34 +19,35 @@ const filterYear = ref("");
 const filteredPrograms = computed(() => {
     return programs.value.filter((program) => {
         const matchSearch =
-            program.name
+            program.nama_program
                 .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            program.partner
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase());
+                .includes(searchQuery.value.toLowerCase()) 
         const matchStatus = filterStatus.value
-            ? program.status === filterStatus.value
+            ? program.stage.tahapan_inkubasi === filterStatus.value
             : true;
         const matchYear = filterYear.value
-            ? program.year === filterYear.value
+            ? new Date(program.tanggal_penyelenggaraan).getFullYear() === parseInt(filterYear.value)
             : true;
         return matchSearch && matchStatus && matchYear;
     });
 });
 
 const years = computed(() =>
-    [...new Set(programs.value.map((p) => p.year))].sort().reverse(),
+    [...new Set(
+        programs.value.map(p =>
+            new Date(p.tanggal_penyelenggaraan).getFullYear()
+        )
+    )].sort((a, b) => b - a)
 );
 
 const getStatusClass = (status) => {
-    if (status === "Pra-Kewirausahaan")
+    if (status === "PRA-KEWIRAUSAHAAN")
         return "bg-amber-50 text-amber-700 border-amber-200";
-    if (status === "Pra-Inkubasi")
+    if (status === "PRA-INKUBASI")
         return "bg-blue-50 text-blue-700 border-blue-200";
-    if (status === "Inkubasi")
+    if (status === "MASA-INKUBASI")
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    if (status === "Pasca Inkubasi")
+    if (status === "PASCA-INKUBASI")
         return "bg-indigo-50 text-indigo-700 border-indigo-200";
     return "bg-slate-50 text-slate-600 border-slate-200";
 };
@@ -91,7 +69,7 @@ const getStatusClass = (status) => {
                             <h1
                                 class="text-2xl md:text-3xl font-bold text-white mb-1"
                             >
-                                Hai, {{ currentUser.name }}! 👋
+                                Hai, {{ user.name }}! 👋
                             </h1>
                             <p
                                 class="text-emerald-50 text-sm font-medium opacity-90"
@@ -151,14 +129,14 @@ const getStatusClass = (status) => {
                                 class="w-full sm:w-48 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 hover:bg-white transition cursor-pointer"
                             >
                                 <option value="">Semua Status</option>
-                                <option value="Pra-Kewirausahaan">
+                                <option value="PRA-KEWIRAUSAHAAN">
                                     🟢 Pra-Kewirausahaan
                                 </option>
-                                <option value="Pra-Inkubasi">
+                                <option value="PRA-INKUBASI">
                                     🔵 Pra-Inkubasi
                                 </option>
-                                <option value="Inkubasi">🟡 Inkubasi</option>
-                                <option value="Pasca Inkubasi">
+                                <option value="MASA-INKUBASI">🟡 Masa Inkubasi</option>
+                                <option value="PASCA-INKUBASI">
                                     ⚪ Pasca Inkubasi
                                 </option>
                             </select>
@@ -215,7 +193,7 @@ const getStatusClass = (status) => {
                                     <div class="flex flex-col">
                                         <span
                                             class="font-bold text-slate-800 text-sm md:text-base mb-1"
-                                            >{{ program.name }}</span
+                                            >{{ program.nama_program }}</span
                                         >
                                     </div>
                                 </td>
@@ -224,7 +202,7 @@ const getStatusClass = (status) => {
                                     <span
                                         class="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200"
                                     >
-                                        {{ program.year }}
+                                        {{ program.tanggal_penyelenggaraan.split('-')[0] }}
                                     </span>
                                 </td>
 
@@ -233,7 +211,7 @@ const getStatusClass = (status) => {
                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-sm"
                                         :class="getStatusClass(program.status)"
                                     >
-                                        {{ program.status }}
+                                        {{ program.stage.tahapan_inkubasi }}
                                     </span>
                                 </td>
 

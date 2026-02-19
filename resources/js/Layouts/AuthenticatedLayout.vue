@@ -6,6 +6,9 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -40,12 +43,14 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                                 <NavLink
+                                    v-if="page.props.auth.user?.role === 'admin' || page.props.auth.user?.role === 'superadmin'"
                                     :href="route('admin.kelola-user')"
                                     :active="route().current('admin.kelola-user')"
                                 >
                                     Manajemen User
                                 </NavLink>
                                 <NavLink
+                                    v-if="page.props.auth.user?.role === 'admin' || page.props.auth.user?.role === 'superadmin'"
                                     :href="route('admin.kelola-program')"
                                     :active="route().current('admin.kelola-program')"
                                 >

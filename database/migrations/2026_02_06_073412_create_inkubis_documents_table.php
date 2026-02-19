@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('inkubis_program_id')->constrained('inkubis_programs')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('tahapan_inkubasi_id')->constrained('inkubis_stages')->onDelete('cascade');
-            $table->foreignId('jenis_dokumen_id')->constrained('document_types')->onDelete('cascade');
+            $table->string('title');
             $table->string('path_dokumen');
-            $table->enum('visibility', ['internal', 'tenant_specific']);
+            $table->enum('visibility', ['Tenant', 'Inkubis_Tim', 'Public']);
+            $table->unsignedBigInteger('file_size');
+            $table->string('mime_type')->nullable();
             $table->timestamps();
         });
     }

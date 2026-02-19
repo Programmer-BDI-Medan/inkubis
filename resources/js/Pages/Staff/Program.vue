@@ -2,11 +2,17 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { ref, reactive, computed } from "vue";
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
 
 // ==========================================
 // 1. STATE & CONFIG
 // ==========================================
-const currentUser = ref({ name: "Staff 001" });
+const currentUser = page.props.auth.user.name; 
+const props = defineProps({
+    program: Object,
+});
 const activeTab = ref("stages"); // 'stages', 'tenants', 'documents'
 const searchQuery = ref("");
 const showFilters = ref(false);
@@ -268,12 +274,12 @@ const submitUpload = () => {
                 >
                     <div class="relative z-10 text-center md:text-left">
                         <h1 class="text-3xl font-bold text-white mb-1">
-                            Arsip Digital 📂
+                            Arsip Digital {{ program.nama_program }}📂
                         </h1>
                         <p
                             class="text-emerald-50 text-sm font-medium opacity-90"
                         >
-                            Halo {{ currentUser.name }}, kelola seluruh dokumen
+                            Halo {{ currentUser }}, kelola seluruh dokumen
                             di sini.
                         </p>
                     </div>
