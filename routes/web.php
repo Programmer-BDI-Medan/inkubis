@@ -73,4 +73,8 @@ Route::get('/tenant-dashboard', function () {
     return Inertia::render('Tenant/Dashboard');
 })->middleware(['auth', 'role:tenant'])->name('tenant.dashboard');
 
+Route::get('/tenant-profile', function () {
+    return Inertia::render('Tenant/Profile');
+})->middleware(['auth', 'role:tenant'])->name('tenant.profile');
+
 require __DIR__ . '/auth.php';
