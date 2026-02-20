@@ -3,13 +3,11 @@
 use App\Http\Controllers\Admin\ManajemenProgramController;
 use App\Http\Controllers\Admin\ManajemenUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\DashboardUserController;
-use App\Http\Controllers\FormPendaftaranController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\DashboardStaffController;
 use App\Http\Controllers\Staff\StaffProgramController;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,7 +25,7 @@ Route::get('/', function () {
 Route::get('/auth-google-redirect', [AuthenticatedSessionController::class, 'google_redirect']);
 Route::get('/auth-google-callback', [AuthenticatedSessionController::class, 'google_callback']);
 
-Route::get('/dashboard', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 // Route::get('/form-pendaftaran/{program}', [FormPendaftaranController::class, 'index'])->middleware(['auth'])->name('form-pendaftaran');
 route::get('/form-pendaftaran', function () {

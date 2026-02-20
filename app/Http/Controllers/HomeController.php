@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JadwalPendaftaran;
 use Illuminate\Http\Request;
+use App\Models\JadwalPendaftaran;
 
-class DashboardUserController extends Controller
+class HomeController extends Controller
 {
     public function index(Request $request)
     {

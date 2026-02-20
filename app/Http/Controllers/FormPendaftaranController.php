@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class FormPendaftaran extends Controller
+class FormPendaftaranController extends Controller
 {
     //
 }
