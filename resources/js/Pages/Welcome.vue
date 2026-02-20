@@ -93,7 +93,7 @@ onUnmounted(() => {
                         Masuk ke Dashboard
                     </Link>
                     <template v-else>
-                        <Link :href="route('register')" class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105">
+                        <Link :href="route('form-pendaftaran')" class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105">
                             Daftar Sekarang
                         </Link>
                         <Link :href="route('login')" class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 transition-all text-center">

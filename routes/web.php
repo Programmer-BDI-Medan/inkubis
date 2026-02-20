@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ManajemenProgramController;
 use App\Http\Controllers\Admin\ManajemenUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\FormPendaftaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\DashboardStaffController;
 use App\Http\Controllers\Staff\StaffProgramController;
@@ -38,6 +39,10 @@ Route::get('/dashboard', function (Request $request) {
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route::get('/form-pendaftaran/{program}', [FormPendaftaranController::class, 'index'])->middleware(['auth'])->name('form-pendaftaran');
+route::get('/form-pendaftaran', function () {
+    return Inertia::render('FormPendaftaran');
+})->middleware(['auth'])->name('form-pendaftaran');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
