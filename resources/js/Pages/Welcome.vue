@@ -9,8 +9,14 @@ const props = defineProps({
     phpVersion: String,
 });
 
+// --- LOGIKA SCROLL ---
+const scrollToProfile = () => {
+    const element = document.getElementById('company-profile');
+    element.scrollIntoView({ behavior: 'smooth' });
+};
+
 // --- LOGIKA COUNTDOWN ---
-const targetDate = new Date('2026-04-18T23:59:59').getTime(); // Atur tanggal target di sini
+const targetDate = new Date('2026-04-18T23:59:59').getTime();
 const days = ref(0);
 const hours = ref(0);
 const minutes = ref(0);
@@ -52,7 +58,7 @@ onUnmounted(() => {
             <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div class="relative z-10 w-full max-w-4xl px-6">
+        <div class="relative z-10 w-full max-w-4xl px-6 mb-12">
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
                     Pendaftaran Pelatihan <span class="text-blue-600 dark:text-blue-400">Inkubator Bisnis</span>
@@ -83,33 +89,60 @@ onUnmounted(() => {
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <template v-if="canLogin">
-                    <Link
-                        v-if="$page.props.auth.user"
-                        :href="route('dashboard')"
-                        class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center"
-                    >
+                    <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center">
                         Masuk ke Dashboard
                     </Link>
-
                     <template v-else>
-                        <Link
-                            :href="route('register')"
-                            class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105"
-                        >
+                        <Link :href="route('register')" class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105">
                             Daftar Sekarang
                         </Link>
-                        <Link
-                            :href="route('login')"
-                            class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 transition-all text-center"
-                        >
+                        <Link :href="route('login')" class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 transition-all text-center">
                             Log in
                         </Link>
                     </template>
                 </template>
             </div>
+        </div>
 
-            <footer class="mt-20 text-center text-slate-400 text-sm">
-                <div class="flex items-center justify-center gap-4 mb-4">
+        <button @click="scrollToProfile" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400 hover:text-blue-500 transition-colors group">
+            <span class="text-xs uppercase tracking-widest font-bold">Profil BDI Medan</span>
+            <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 13l-7 7-7-7m14-8l-7 7-7-7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <div id="company-profile" class="min-h-screen bg-white dark:bg-zinc-900 py-24 px-6 relative">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="w-full md:w-1/2 h-80 bg-slate-200 dark:bg-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
+                    <div class="flex items-center justify-center h-full text-slate-400">
+                        [Image: Balai Diklat Industri Medan]
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">
+                        Tentang <span class="text-blue-600">BDI Medan</span>
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                        Balai Diklat Industri (BDI) Medan merupakan unit pelaksana teknis di bawah Kementerian Perindustrian yang berfokus pada pengembangan SDM industri, khususnya di sektor pengolahan pangan dan industri kreatif.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white">Visi</h4>
+                            <p class="text-sm text-slate-500">Menjadi pusat unggulan pendidikan dan pelatihan industri yang kompeten.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white">Misi</h4>
+                            <p class="text-sm text-slate-500">Menciptakan tenaga kerja terampil dan wirausaha baru yang mandiri.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-24 text-center text-slate-400 text-sm">
+                <div class="flex items-center justify-center gap-4">
                     <div class="h-px w-12 bg-slate-300 dark:bg-zinc-800"></div>
                     <span>Supported by Laravel v{{ laravelVersion }}</span>
                     <div class="h-px w-12 bg-slate-300 dark:bg-zinc-800"></div>
@@ -120,6 +153,7 @@ onUnmounted(() => {
 </template>
 
 <style>
+/* CSS Kamu yang lama tetap dipertahankan */
 @keyframes blob {
     0% { transform: translate(0px, 0px) scale(1); }
     33% { transform: translate(30px, -50px) scale(1.1); }
@@ -134,5 +168,10 @@ onUnmounted(() => {
 }
 .animation-delay-4000 {
     animation-delay: 4s;
+}
+
+/* Tambahan kelancaran scroll jika browser tidak mendukung smooth behavior lewat JS */
+html {
+    scroll-behavior: smooth;
 }
 </style>
