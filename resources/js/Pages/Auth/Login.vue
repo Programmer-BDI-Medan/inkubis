@@ -225,11 +225,11 @@ const loginWithGoogle = () => {
                     >
                         <div class="text-center">
                             <span class="block text-xl font-bold text-white"
-                                >100+</span
+                                >3 Year+</span
                             >
                             <span
                                 class="text-[10px] text-teal-200 uppercase tracking-wider"
-                                >Tenant</span
+                                >Program Inkubator Bisnis</span
                             >
                         </div>
                     </div>
