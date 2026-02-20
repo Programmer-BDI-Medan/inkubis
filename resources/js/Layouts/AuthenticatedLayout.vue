@@ -23,7 +23,7 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('welcome')">
                                     <img
                                         src="/images/LOGO INBIS.png"
                                         alt="Logo Inkubator Bisnis"

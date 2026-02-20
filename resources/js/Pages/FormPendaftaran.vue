@@ -1,3 +1,43 @@
+<script setup>
+import { ref, reactive } from 'vue'
+
+const systemData = {
+  programName: 'HILIRISASI INDUSTRI & INKUBASI BISNIS 2026',
+  userName: 'admin01@example.com' // Diambil dari state login
+}
+
+const formData = reactive({
+  namaTenant: '',
+  jenisProduk: '',
+  deskripsi: '',
+  email: '',
+  noHp: '',
+  dokumen: null
+})
+
+const fileName = ref('')
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    formData.dokumen = file
+    fileName.value = file.name
+  }
+}
+
+const goBack = () => {
+  // Gunakan router jika menggunakan vue-router
+  // router.back() atau router.push('/dashboard')
+  console.log('Navigasi kembali ke Dashboard')
+  window.history.back()
+}
+
+const handleSubmit = () => {
+  console.log('Data Pendaftaran:', formData)
+  alert('Berhasil! Data Anda sedang diproses oleh Tim Inkubator BDI Medan.')
+}
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-2xl mx-auto">
@@ -102,42 +142,3 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-
-const systemData = {
-  programName: 'HILIRISASI INDUSTRI & INKUBASI BISNIS 2026',
-  userName: 'admin01@example.com' // Diambil dari state login
-}
-
-const formData = reactive({
-  namaTenant: '',
-  jenisProduk: '',
-  deskripsi: '',
-  email: '',
-  noHp: '',
-  dokumen: null
-})
-
-const fileName = ref('')
-
-const handleFileUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    formData.dokumen = file
-    fileName.value = file.name
-  }
-}
-
-const goBack = () => {
-  // Gunakan router jika menggunakan vue-router
-  // router.back() atau router.push('/dashboard')
-  console.log('Navigasi kembali ke Dashboard')
-  window.history.back()
-}
-
-const handleSubmit = () => {
-  console.log('Data Pendaftaran:', formData)
-  alert('Berhasil! Data Anda sedang diproses oleh Tim Inkubator BDI Medan.')
-}
-</script>

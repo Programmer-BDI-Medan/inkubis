@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ManajemenProgramController;
 use App\Http\Controllers\Admin\ManajemenUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\FormPendaftaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\DashboardStaffController;
@@ -20,11 +21,13 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('welcome');
 
 //Google Login
 Route::get('/auth-google-redirect', [AuthenticatedSessionController::class, 'google_redirect']);
 Route::get('/auth-google-callback', [AuthenticatedSessionController::class, 'google_callback']);
+
+Route::get('/dashboard', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::get('/dashboard', function (Request $request) {
     $role = $request->user()->role;
