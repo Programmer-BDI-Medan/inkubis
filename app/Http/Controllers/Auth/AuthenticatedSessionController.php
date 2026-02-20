@@ -75,7 +75,7 @@ class AuthenticatedSessionController extends Controller
                 'tenant'      => 'tenant.dashboard',
             ];
 
-            $routeName = $roleRoutes[$user->role] ?? 'dashboard';
+            $routeName = $roleRoutes[$user->role] ?? 'welcome';
 
             return redirect()->intended(route($routeName, absolute: false));
         }

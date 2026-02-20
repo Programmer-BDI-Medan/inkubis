@@ -1,6 +1,11 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
+
+const isDropdownOpen = ref(false);
+const logout = () => {
+    router.post(route('logout'));
+};
 
 const props = defineProps({
     canLogin: Boolean,
@@ -89,20 +94,33 @@ onUnmounted(() => {
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <template v-if="canLogin">
-                    <Link :href="route('form-pendaftaran')" class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105">
-                            Daftar Sekarang
+        
+                    <!-- tombol daftar -->
+                    <Link 
+                        :href="route('form-pendaftaran')" 
+                        class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl"
+                    >
+                        Daftar Sekarang
                     </Link>
-                    <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 transition-all text-center">
+
+                    <!-- kalau login & bukan user -->
+                    <Link 
+                        v-if="$page.props.auth.user && $page.props.auth.user.role !== 'user'" 
+                        :href="route('dashboard')" 
+                        class="w-full sm:w-auto px-10 py-4 bg-white font-bold rounded-xl border"
+                    >
                         Masuk ke Dashboard
                     </Link>
-                    <template v-else>
-                        <Link :href="route('form-pendaftaran')" class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-center transform hover:scale-105">
-                            Daftar Sekarang
-                        </Link>
-                        <Link :href="route('login')" class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 transition-all text-center">
-                            Log in
-                        </Link>
-                    </template>
+
+                    <!-- kalau belum login -->
+                    <Link 
+                        v-else-if="!$page.props.auth.user"
+                        :href="route('login')" 
+                        class="w-full sm:w-auto px-10 py-4 bg-white font-bold rounded-xl border"
+                    >
+                        Log in
+                    </Link>
+
                 </template>
             </div>
         </div>
@@ -113,7 +131,54 @@ onUnmounted(() => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 13l-7 7-7-7m14-8l-7 7-7-7"></path>
             </svg>
         </button>
+
+        
+        
     </div>
+    
+    <nav v-if="$page.props.auth.user" class="absolute top-0 right-0 p-6 z-50">
+        <div class="relative">
+            <button 
+                @click="isDropdownOpen = !isDropdownOpen"
+                class="flex items-center gap-3 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 py-2 rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-800 hover:border-blue-400 transition-all group"
+            >
+                <div class="flex flex-col text-right hidden sm:block">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Halo,</span>
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">{{ $page.props.auth.user.name }}</span>
+                </div>
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200 dark:shadow-none uppercase">
+                    {{ $page.props.auth.user.name.substring(0, 1) }}
+                </div>
+            </button>
+
+            <transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+            >
+                <div v-if="isDropdownOpen" class="absolute right-0 mt-3 w-48 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-slate-100 dark:border-zinc-800 py-2 z-50">
+                    <Link :href="route('profile.edit')" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Edit Profil
+                    </Link>
+                    
+                    <div class="h-px bg-slate-100 dark:bg-zinc-800 my-1 mx-2"></div>
+                    
+                    <button @click="logout" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Keluar
+                    </button>
+                </div>
+            </transition>
+        </div>
+    </nav>
 
     <div id="company-profile" class="min-h-screen bg-white dark:bg-zinc-900 py-24 px-6 relative">
         <div class="max-w-5xl mx-auto">

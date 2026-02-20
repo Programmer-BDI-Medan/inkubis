@@ -29,19 +29,6 @@ Route::get('/auth-google-callback', [AuthenticatedSessionController::class, 'goo
 
 Route::get('/dashboard', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
-Route::get('/dashboard', function (Request $request) {
-    $role = $request->user()->role;
-
-    // Arahkan berdasarkan role
-    return match ($role) {
-        'super_admin' => redirect()->route('admin.dashboard'),
-        'admin'        => redirect()->route('admin.dashboard'),
-        'staff'        => redirect()->route('staff.dashboard'),
-        'tenant'      => redirect()->route('tenant.dashboard'),
-        default       => inertia('Dashboard'), // User biasa ke dashboard standar
-    };
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // Route::get('/form-pendaftaran/{program}', [FormPendaftaranController::class, 'index'])->middleware(['auth'])->name('form-pendaftaran');
 route::get('/form-pendaftaran', function () {
     return Inertia::render('FormPendaftaran');
