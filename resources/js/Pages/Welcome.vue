@@ -12,6 +12,7 @@ const props = defineProps({
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
+    programOpen: Object,
 });
 
 // --- LOGIKA SCROLL ---
@@ -20,8 +21,22 @@ const scrollToProfile = () => {
     element.scrollIntoView({ behavior: 'smooth' });
 };
 
+
 // --- LOGIKA COUNTDOWN ---
-const targetDate = new Date('2026-04-18T23:59:59').getTime();
+const buka = props.programOpen?.tanggal_buka
+    ? new Date(props.programOpen.tanggal_buka).getTime()
+    : null;
+
+const tutup = props.programOpen?.tanggal_tutup
+    ? new Date(props.programOpen.tanggal_tutup).getTime()
+    : null;
+
+const now = new Date().getTime();
+
+const isBuka = buka && now < buka ? false : true;
+
+const targetDate = buka && now < buka ? buka : tutup;
+
 const days = ref(0);
 const hours = ref(0);
 const minutes = ref(0);
@@ -68,8 +83,11 @@ onUnmounted(() => {
                 <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
                     Pendaftaran Pelatihan <span class="text-blue-600 dark:text-blue-400">Inkubator Bisnis</span>
                 </h1>
-                <p class="text-lg text-slate-600 dark:text-slate-400">
+                <p v-if="isBuka" class="text-lg text-slate-600 dark:text-slate-400">
                     Segera daftarkan diri Anda sebelum pendaftaran ditutup!
+                </p>
+                <p v-else class="text-lg text-slate-600 dark:text-slate-400">
+                    Akan segera dibuka dalam waktu:
                 </p>
             </div>
 
