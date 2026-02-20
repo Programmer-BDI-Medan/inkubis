@@ -197,17 +197,29 @@ const addProgram = () => {
         
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-slate-800">Manajemen Program</h1>
-            <p class="text-slate-500 text-sm">Kelola program inkubasi dan akselerasi bisnis Anda.</p>
+              <h1 class="text-2xl font-bold text-slate-800">Manajemen Program</h1>
+              <p class="text-slate-500 text-sm">Kelola program inkubasi dan akselerasi bisnis Anda.</p>
           </div>
-          <button 
-            @click="openAddModal"
-            class="flex items-center justify-center bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-100 transition-all transform active:scale-95"
-          >
-            <span class="text-xl mr-2 leading-none">+</span>
-            Tambah Program Baru
-          </button>
-        </div>
+          <div class="flex gap-3"> 
+              <button 
+                  @click="openRegisModalOutside"
+                  class="flex items-center justify-center bg-white border-2 border-orange-500 text-orange-600 px-6 py-2.5 rounded-xl font-bold shadow-sm transition-all transform active:scale-95 hover:bg-orange-50"
+              >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Atur Waktu Pendaftaran
+              </button>
+
+              <button 
+                  @click="openAddModal"
+                  class="flex items-center justify-center bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-100 transition-all transform active:scale-95"
+              >
+                  <span class="text-xl mr-2 leading-none">+</span>
+                  Tambah Program Baru
+              </button>
+          </div>
+      </div>
 
         <!-- Modal Add Program -->
          <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">

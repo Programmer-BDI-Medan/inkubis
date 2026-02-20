@@ -29,7 +29,11 @@ class ManajemenProgramController extends Controller
 
         $program = new InkubisProgram();
 
-        $program->tahapan_inkubasi_id = 1;
+        if ($validated['isPraKewirausahaan']) {
+            $program->tahapan_inkubasi_id = 1; // Tahapan Pra-Kewirausahaan
+        } else {
+            $program->tahapan_inkubasi_id = 2; // Tahapan pendaftaran tenant (Pra-Inkubasi)
+        }
         $program->nama_program = $validated['nama'];
         $program->deskripsi = $validated['deskripsi'];
         $program->tanggal_penyelenggaraan = $validated['tanggal'];
