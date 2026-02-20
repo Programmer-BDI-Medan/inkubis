@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\InkubisProgram;
+use App\Models\JadwalPendaftaran;
 use Illuminate\Http\Request;
 
 class ManajemenProgramController extends Controller
@@ -11,9 +12,11 @@ class ManajemenProgramController extends Controller
     public function index()
     {
         $programs = InkubisProgram::with(['stage', 'tenants'])->get();
+        $jadwalPendaftaran = JadwalPendaftaran::with('inkubis')->get();
 
         return inertia('Admin/KelolaProgram', [
-            'programs' => $programs
+            'programs' => $programs,
+            'jadwalPendaftaran' => $jadwalPendaftaran
         ]);
     }
 
@@ -64,5 +67,32 @@ class ManajemenProgramController extends Controller
         $program->delete();
 
         return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil dihapus!');
+    }
+
+    public function addPendaftaran(Request $request)
+    {
+        $validated = $request->validate([
+            'program_id' => 'required|exists:inkubis_programs,id',
+            'tanggal_buka' => 'required|date',
+            'tanggal_tutup' => 'required|date|after:tanggal_buka',
+            'status' => 'required|in:buka,tutup',
+        ]);
+        $pendaftaran = new JadwalPendaftaran();
+        $pendaftaran->inkubis_program_id = $validated['program_id'];
+        $pendaftaran->tanggal_buka = $validated['tanggal_buka'];
+        $pendaftaran->tanggal_tutup = $validated['tanggal_tutup'];
+        $pendaftaran->status = $validated['status'];
+        $pendaftaran->save();
+        // JadwalPendaftaran::create($request->all());
+        
+    }
+
+    public function updatePendaftaran(Request $request, $id)
+    {
+        $pendaftaran = JadwalPendaftaran::findOrFail($id);
+        $pendaftaran->tanggal_buka = $request->tanggal_buka;
+        $pendaftaran->tanggal_tutup = $request->tanggal_tutup;
+        $pendaftaran->status = $request->status;
+        $pendaftaran->save();
     }
 }

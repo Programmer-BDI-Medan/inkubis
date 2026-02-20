@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inkubis_stages', function (Blueprint $table) {
+        Schema::create('jadwal_pendaftaran', function (Blueprint $table) {
             $table->id();
-            $table->string('tahapan_inkubasi');
-            $table->text('deskripsi')->nullable();
+            $table->foreignId('inkubis_program_id')->constrained('inkubis_programs')->onDelete('cascade');       
+            $table->dateTime('tanggal_buka');
+            $table->dateTime('tanggal_tutup');
+            $table->enum('status', ['buka', 'tutup'])->default('buka'); 
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inkubis_stages');
+        Schema::dropIfExists('jadwal_pendaftaran');
     }
 };

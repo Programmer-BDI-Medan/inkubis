@@ -56,6 +56,8 @@ Route::delete('/kelola-user/{user}/delete', [ManajemenUserController::class, 'de
 
 Route::get('/kelola-program', [ManajemenProgramController::class, 'index'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.kelola-program');
 Route::post('/add-program', [ManajemenProgramController::class, 'add'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.add-program');
+Route::post('/pendaftaran-program', [ManajemenProgramController::class, 'addPendaftaran'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.add-pendaftaran');
+Route::put('/pendaftaran-program/{id}', [ManajemenProgramController::class, 'updatePendaftaran'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.update-pendaftaran');
 Route::patch('/update-program/{id}', [ManajemenProgramController::class, 'update'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.update-program');
 Route::delete('/delete-program/{id}', [ManajemenProgramController::class, 'destroy'])->middleware(['auth', 'role:super_admin,admin'])->name('admin.delete-program');
 

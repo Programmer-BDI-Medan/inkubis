@@ -1,10 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    programs: Array
+    programs: Array,
+    jadwalPendaftaran: Array,
 })
 
 const stats = [
@@ -80,6 +81,78 @@ const form = useForm({
   idTahapan: null,
   namaTahapan: ''
 });
+
+// --- LOGIKA MODAL PENDAFTARAN ---
+const isRegisModalOpen = ref(false);
+const isUpdate = ref(false);
+
+const jadwalOpen = computed(() => {
+    return props.jadwalPendaftaran.find(j => j.status === 'buka') || null;
+});
+
+const programCanRegis = props.programs.filter(program => {
+    return program.tahapan_inkubasi_id === 2;
+});
+
+const regisForm = useForm({
+    id: null,
+    program_id: null,
+    tanggal_buka: '',
+    tanggal_tutup: '',
+    status: '',
+});
+
+const openRegisModal = () => {
+    const data = jadwalOpen.value;
+    console.log(data)
+
+    regisForm.id = data ? data.id : null;
+    regisForm.program_id = data ? data.inkubis_id : null;
+    regisForm.nama_program = data ? data.inkubis?.nama_program : '';
+    regisForm.tanggal_buka = data ? data.tanggal_buka : '';
+    regisForm.tanggal_tutup = data ? data.tanggal_tutup : '';
+
+    isUpdate.value = !!data;
+    isRegisModalOpen.value = true;
+};
+
+const submitPendaftaran = () => {
+    regisForm.status = 'buka';
+    console.log(regisForm.data());
+
+    if (regisForm.id) {
+        // UPDATE
+        regisForm.put(route('admin.update-pendaftaran', regisForm.id), {
+            onSuccess: () => {
+                isRegisModalOpen.value = false;
+                router.reload({ only: ['jadwalPendaftaran'] });
+                alert('Data berhasil diupdate!');
+            }
+        });
+    } else {
+        // INSERT
+        
+        regisForm.post(route('admin.add-pendaftaran'), {
+            onSuccess: () => {
+                isRegisModalOpen.value = false;
+                alert('Data berhasil ditambahkan!');
+            }
+        });
+    }
+};
+
+const tutupPendaftaran = () => {
+    console.log('Tutup pendaftaran dengan data:', regisForm.data());
+    if (!regisForm.id) return;
+
+    regisForm.status = 'tutup';
+    regisForm.put(route('admin.update-pendaftaran', regisForm.id), {
+        onSuccess: () => {
+            isRegisModalOpen.value = false;
+            alert('Pendaftaran berhasil ditutup!');
+        }
+    });
+};
 
 const isViewModalOpen = ref(false);
 const openViewModal = (program) => {
@@ -202,8 +275,8 @@ const addProgram = () => {
           </div>
           <div class="flex gap-3"> 
               <button 
-                  @click="openRegisModalOutside"
-                  class="flex items-center justify-center bg-white border-2 border-orange-500 text-orange-600 px-6 py-2.5 rounded-xl font-bold shadow-sm transition-all transform active:scale-95 hover:bg-orange-50"
+                  @click="openRegisModal"
+                  class="flex items-center justify-center bg-gradient-to-br from-indigo-600 to-violet-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md shadow-indigo-200 transition-all transform hover:shadow-lg active:scale-95"
               >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -269,6 +342,105 @@ const addProgram = () => {
                     </div>
                 </div>
           </div>
+
+          <!-- Model Atur Jadwal Pendaftaran -->
+          <div v-if="isRegisModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="isRegisModalOpen = false"></div>
+            
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden border border-slate-100">
+                <div class="px-6 py-4 border-b bg-blue-50/50 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">Buka Pendaftaran Pelatihan</h2>
+                    <button @click="isRegisModalOpen = false" class="text-slate-400 hover:text-slate-600">✕</button>
+                </div>
+
+                <div class="px-6 py-6 space-y-5">
+                    <div>
+                    <label class="block text-[12px] font-semibold text-slate-700 uppercase tracking-widest mb-1">
+                        Pendaftaran Pelatihan Ditampilkan
+                    </label>
+                    <div class="relative">
+                      <!--  Kondisi: ADA jadwal buka -->
+                      <template v-if="jadwalOpen">
+                          <input 
+                              type="text"
+                              :value="jadwalOpen.inkubis.nama_program"
+                              disabled
+                              class="w-full px-4 py-3 border border-slate-200 rounded-xl font-semibold text-slate-500 bg-slate-100 cursor-not-allowed text-sm"
+                          />
+                      </template>
+
+                      <!--  Kondisi: TIDAK ADA jadwal buka -->
+                      <template v-else>
+                          <select 
+                              v-model="regisForm.program_id" 
+                              class="w-full px-4 py-3 border border-slate-200 rounded-xl font-semibold text-slate-700 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none appearance-none transition-all cursor-pointer text-sm"
+                          >
+                              <option :value="null" disabled>-- Pilih program yang akan dibuka --</option>
+                              <option 
+                                  v-for="program in programCanRegis" 
+                                  :key="program.id" 
+                                  :value="program.id"
+                              >
+                                  {{ program.nama_program }}
+                              </option>
+                          </select>
+
+                          <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                              <svg class="h-4 w-4 text-slate-400"></svg>
+                          </div>
+                      </template>
+
+                  </div>
+                </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Mulai Pendaftaran</label>
+                            <input v-model="regisForm.tanggal_buka" type="datetime-local"
+                                class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 focus:outline-none text-sm transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tutup Pendaftaran</label>
+                            <input v-model="regisForm.tanggal_tutup" type="datetime-local"
+                                class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 focus:outline-none text-sm transition-all">
+                        </div>
+                    </div>
+                    
+                    <p class="text-[11px] text-slate-500 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <strong>Catatan:</strong> Waktu pendaftaran ini akan tampil secara otomatis di halaman landing page utama sebagai hitung mundur.
+                    </p>
+                </div>
+
+                <div class="px-6 py-4 bg-slate-50 flex gap-3">
+                  <template v-if="jadwalOpen">
+                    
+                      <button @click="tutupPendaftaran"
+                          :disabled="regisForm.processing"
+                          class="flex-1 py-2.5 bg-gradient-to-br from-red-600 to-orange-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-200 disabled:opacity-50">
+                          {{ regisForm.processing ? 'Memproses...' : 'Tutup Pendaftaran' }}
+                      </button>
+                      <button @click="submitPendaftaran" 
+                          :disabled="regisForm.processing"
+                          class="flex-1 py-2.5 bg-gradient-to-br from-indigo-600 to-violet-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-200 disabled:opacity-50">
+                          {{ regisForm.processing ? 'Memproses...' : 'Update Pendaftaran' }}
+                      </button>
+                  </template>
+
+                  <template v-else>
+                    
+                      <button @click="isRegisModalOpen = false" class="flex-1 py-2.5 font-bold text-slate-600 hover:text-slate-800 transition-colors">
+                          Batal
+                      </button>
+                      <button @click="submitPendaftaran" 
+                          :disabled="regisForm.processing"
+                          class="flex-1 py-2.5 bg-gradient-to-br from-indigo-600 to-violet-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-200 disabled:opacity-50">
+                          {{ regisForm.processing ? 'Memproses...' : 'Buka Pendaftaran' }}
+                      </button>
+                  </template>
+                </div>
+            </div>
+          </div> 
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
           <div
@@ -391,6 +563,8 @@ const addProgram = () => {
                           </svg>
                       </button>
                   </td>
+
+
 
                     <!-- View Modal Program -->
                      <div v-if="isViewModalOpen" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
