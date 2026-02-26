@@ -73,7 +73,7 @@ class AuthenticatedSessionController extends Controller
                 'admin' => 'admin.dashboard',
                 'staff'       => 'staff.dashboard',
                 'tenant'      => 'tenant.dashboard',
-            ];
+            ]; 
 
             $routeName = $roleRoutes[$user->role] ?? 'welcome';
 

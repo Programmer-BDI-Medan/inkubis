@@ -20,12 +20,13 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('welcome');
+Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 
 //Google Login
 Route::get('/auth-google-redirect', [AuthenticatedSessionController::class, 'google_redirect']);
 Route::get('/auth-google-callback', [AuthenticatedSessionController::class, 'google_callback']);
 
-Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
 // Route::get('/form-pendaftaran/{program}', [FormPendaftaranController::class, 'index'])->middleware(['auth'])->name('form-pendaftaran');
 route::get('/form-pendaftaran', function () {
