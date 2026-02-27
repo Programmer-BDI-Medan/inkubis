@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\InkubisProgram;
 use App\Models\JadwalPendaftaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Yaza\LaravelGoogleDriveStorage\Gdrive;
 
 class ManajemenProgramController extends Controller
 {
@@ -29,8 +31,10 @@ class ManajemenProgramController extends Controller
             'isPraKewirausahaan' => 'required|boolean',
         ]);
 
-
         $program = new InkubisProgram();
+
+        Storage::disk('google')->makeDirectory($validated['nama']);
+
 
         if ($validated['isPraKewirausahaan']) {
             $program->tahapan_inkubasi_id = 1; // Tahapan Pra-Kewirausahaan
@@ -42,6 +46,7 @@ class ManajemenProgramController extends Controller
         $program->tanggal_penyelenggaraan = $validated['tanggal'];
         $program->pra_kewirausahaan = $validated['isPraKewirausahaan'];
 
+
         $program->save();
 
         return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil ditambahkan!');
@@ -51,11 +56,18 @@ class ManajemenProgramController extends Controller
     { 
         $program = InkubisProgram::findOrFail($id);
 
+        // google
+        $oldfolderpath = $program->nama_program;
+        $newfolder = $request->nama;
+        Gdrive::renameDir($oldfolderpath, $newfolder);
+
         $program->tahapan_inkubasi_id = $request->idTahapan;
         $program->nama_program = $request->nama;
         $program->deskripsi = $request->deskripsi;
         $program->tanggal_penyelenggaraan = $request->tanggal;
         $program->pra_kewirausahaan = $request->isPraKewirausahaan;
+
+
         $program->save();
 
         return redirect()->route('admin.kelola-program')->with('success', 'Program berhasil diperbarui!');

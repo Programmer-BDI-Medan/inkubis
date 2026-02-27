@@ -1,12 +1,19 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref} from 'vue'
+import { useForm, usePage } from '@inertiajs/vue3'
+
+const props = defineProps({
+      program: Object
+})
+
+const page = usePage()
 
 const systemData = {
-  programName: 'HILIRISASI INDUSTRI & INKUBASI BISNIS 2026',
-  userName: 'admin01@example.com' // Diambil dari state login
+  programName: props.program?.inkubis.nama_program || '',
+  userName: page.props.auth.user.name
 }
 
-const formData = reactive({
+const formData = useForm({
   namaTenant: '',
   jenisProduk: '',
   deskripsi: '',
@@ -34,6 +41,9 @@ const goBack = () => {
 
 const handleSubmit = () => {
   console.log('Data Pendaftaran:', formData)
+  formData.post(route('form-pendaftaran.submit', props.program.id),{
+    forceFormData: true,
+  })
   alert('Berhasil! Data Anda sedang diproses oleh Tim Inkubator BDI Medan.')
 }
 </script>

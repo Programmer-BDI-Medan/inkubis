@@ -115,7 +115,7 @@ onUnmounted(() => {
         
                     <!-- tombol daftar -->
                     <Link 
-                        :href="route('form-pendaftaran')" 
+                        :href="route('form-pendaftaran', programOpen.id)" 
                         class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl"
                     >
                         Daftar Sekarang
