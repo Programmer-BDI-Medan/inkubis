@@ -332,9 +332,9 @@ const updateCountdown = () => {
             >
                 <template v-if="canLogin">
                     <!-- tombol daftar -->
-                    <Link
-                        :href="route('form-pendaftaran')"
-                        class="w-full sm:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
+                    <Link 
+                        :href="route('form-pendaftaran', programOpen.id)" 
+                        class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
                     >
                         Daftar Sekarang
                     </Link>
