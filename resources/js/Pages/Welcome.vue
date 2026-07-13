@@ -332,12 +332,14 @@ const updateCountdown = () => {
             >
                 <template v-if="canLogin">
                     <!-- tombol daftar -->
+                    <template v-if="programOpen">
                     <Link 
                         :href="route('form-pendaftaran', programOpen.id)" 
                         class="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
                     >
                         Daftar Sekarang
                     </Link>
+                    </template>
 
                     <!-- kalau login & bukan user -->
                     <Link
@@ -918,26 +920,62 @@ const updateCountdown = () => {
                 <p class="text-slate-600 dark:text-slate-400 mb-6">
                     Tertarik untuk bergabung dengan program inkubasi kami?
                 </p>
-                <Link
-                    v-if="canLogin"
-                    :href="route('form-pendaftaran')"
-                    class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all"
-                >
-                    <span>Daftar Sekarang</span>
-                    <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                
+                <template v-if="programOpen">
+                    <Link 
+                        v-if="canLogin"
+                        :href="route('form-pendaftaran', programOpen.id)" 
+                        class="block w-full px-5 py-3 text-center bg-blue-600..."
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                    </svg>
-                </Link>
+                        Daftar Sekarang
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                        </svg>
+                    </Link>
+                </template>
+                <template v-if="programOpen">
+                    <Link
+                        v-if="canLogin"
+                        :href="route('form-pendaftaran', programOpen.id)"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all"
+                    >
+                        <span>Daftar Sekarang</span>
+                        
+                    </Link>
+                </template>
+
+                <template v-else>
+                    <button
+                        v-if="canLogin"
+                        disabled
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-slate-300 text-slate-500 font-bold rounded-2xl cursor-not-allowed"
+                    >
+                        <span>Pendaftaran Ditutup</span>
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            />
+                        </svg>
+                    </button>
+                </template>
             </div>
         </div>
     </div>
